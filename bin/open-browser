@@ -64,7 +64,7 @@ function listen(port) {
 
   fs.exists('./browser-config.js', function(exists) {
     if (exists) {
-      options.config = require('./browser-config');
+      options.config = require(process.cwd()+'/browser-config');
     }
   });
 
