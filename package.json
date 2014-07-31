@@ -1,6 +1,6 @@
 {
   "name": "open-browser",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "author": "学霸 <helloyou2012@yeah.net>",
   "description": "A http server for debug demo",
   "main": "./lib/open-browser",
