@@ -30,13 +30,13 @@ This will install `open-browser` globally so that it may be run from the command
 
 `-i` Display autoIndex (defaults to 'True')
 
-`-e` or `--ext` Default file extension (defaults to 'html')
+`-e` or `--ext` Set environment: [none], debug, daily, publish.
 
 `-s` or `--silent` In silent mode, log messages aren't logged to the console.
 
 `-h` or `--help` Displays a list of commands and exits.
 
-`-t` Using template handler 'config.js'.
+`-t` Using template handler 'browser-config.js'.
 
 `-c` Set cache time (in seconds) for cache-control max-age header, e.g. -c10 for 10 seconds. To disable caching, use -c-1.
 
