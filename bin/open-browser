@@ -59,13 +59,7 @@ function listen(port) {
 
   var config = require('../lib/config');
   if (argv.t) {
-    fs.exists('./browser-config.js', function(exists) {
-      if (exists) {
-        config = require(process.cwd()+'/browser-config');
-      }else{
-        log('browser-config not found!');
-      }
-    });
+    config = require(process.cwd()+'/browser-config');
   }
 
   if (argv.e) {
