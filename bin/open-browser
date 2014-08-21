@@ -77,13 +77,15 @@ function listen(port) {
   }
 
   var getIpAddress = function() {
-    var os = require('os');
-    var ifaces = os.networkInterfaces();
-    var ips = ifaces['en0'] || ifaces['en1'];
+    if (process.platform !== 'win32') {
+      var os = require('os');
+      var ifaces = os.networkInterfaces();
+      var ips = ifaces['en0'] || ifaces['en1'];
 
-    for (var i = 0, ip; ip = ips[i]; i++) {
-      if (ip.family == 'IPv4') {
-        return ip.address;
+      for (var i = 0, ip; ip = ips[i]; i++) {
+        if (ip.family == 'IPv4') {
+          return ip.address;
+        }
       }
     }
     return '127.0.0.1';
@@ -92,7 +94,7 @@ function listen(port) {
   var server = openBrowser.createServer(options);
   server.listen(port, host, function() {
     var url = 'http://' + getIpAddress() + ':' + port.toString();
-    
+
     log('Starting up open-browser, serving '.yellow + server.root.cyan + ' on port: '.yellow + port.toString().cyan);
     log('Server url: '.yellow + url.cyan);
     log('Hit CTRL-C to stop the server');
