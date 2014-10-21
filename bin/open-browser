@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
 var colors = require('colors'),
-  openBrowser = require('../lib/open-browser'),
   argv = require('optimist').argv,
   portfinder = require('portfinder'),
   fs = require('fs'),
-  opener = require('opener');
+  _ = require('lodash'),
+  opener = require('opener'),
+  openBrowser = require('../lib/open-browser'),
+  ip = require('../lib/ip');
 
 if (argv.h || argv.help) {
   console.log([
@@ -59,7 +61,8 @@ function listen(port) {
 
   var config = require('../lib/config');
   if (argv.t) {
-    config = require(process.cwd() + '/browser-config');
+    var conf = require(process.cwd() + '/browser-config');
+    _.assign(config, conf);
   }
 
   if (argv.e) {
@@ -68,32 +71,18 @@ function listen(port) {
     options.config = config['none'];
   }
 
-
+  options.proxy = config['proxy'];
 
   if (argv.cors) {
     options.headers = {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept'
     };
-  }
-
-  var getIpAddress = function() {
-    if (process.platform !== 'win32') {
-      var os = require('os');
-      var ifaces = os.networkInterfaces();
-      var ips = ifaces['en0'] || ifaces['en1'];
-
-      for (var i = 0, ip; ip = ips[i]; i++) {
-        if (ip.family == 'IPv4') {
-          return ip.address;
-        }
-      }
-    }
-    return '127.0.0.1';
   }
 
   var server = openBrowser.createServer(options);
   server.listen(port, host, function() {
-    var url = 'http://' + getIpAddress() + ':' + port.toString();
+    var url = 'http://' + ip.address() + ':' + port.toString();
 
     log('Starting up open-browser, serving '.yellow + server.root.cyan + ' on port: '.yellow + port.toString().cyan);
     log('Server url: '.yellow + url.cyan);
