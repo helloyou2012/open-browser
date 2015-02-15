@@ -2,7 +2,7 @@
 
 > `open-browser` is a simple, command-line http server for debug demo pages.
 
-# Installing globally:
+## Installing globally:
 
 Installation via `npm`.  If you don't have `npm` yet:
 
