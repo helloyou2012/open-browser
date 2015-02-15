@@ -1,9 +1,9 @@
 {
   "name": "open-browser",
-  "version": "2.1.0",
+  "version": "3.5.0",
   "author": "学霸 <helloyou2012@yeah.net>",
   "description": "A http server for debug demo",
-  "main": "./lib/open-browser",
+  "main": "./lib/index",
   "repository": {
     "type": "git",
     "url": "https://github.com/helloyou2012/open-browser.git"
@@ -17,16 +17,40 @@
     "test": "vows --spec --isolate"
   },
   "dependencies": {
-    "colors": "0.6.x",
-    "optimist": "0.5.x",
-    "union": "0.3.x",
-    "ecstatic": "0.4.x",
+    "colors": "~1.0.3",
+    "optimist": "~0.6.1",
+    "ecstatic": "~0.5.7",
     "portfinder": "0.2.x",
-    "opener": "~1.3.0",
-    "swig": "latest",
-    "lodash": "latest",
-    "http-proxy": "latest",
-    "bluebird": "latest"
+    "opener": "~1.4.0",
+    "swig": "~1.4.2",
+    "lodash": "~2.4.1",
+    "bluebird": "~2.3.11",
+    "connect": "~3.3.4",
+    "connect-logger": "~0.0.1",
+    "connect-header": "~0.0.5",
+    "errorhandler": "~1.3.2",
+    "serve-index": "~1.6.0",
+    "combo-url": "~0.2.0",
+    "system-proxy": "~2.0.0",
+    "request": "~2.51.0",
+    "css-imports": "~0.3.0",
+    "debug": "~2.1.0",
+    "father": "~0.10.2",
+    "glob": "~4.0.6",
+    "gulp-coffee": "~2.1.1",
+    "gulp-if": "~1.2.4",
+    "gulp-less": "~1.3.3",
+    "gulp-reactify": "~1.0.0",
+    "handlebars": "1.3.0",
+    "mime": "~1.2.11",
+    "multipipe": "~0.1.1",
+    "rename": "~0.2.3",
+    "searequire": "~1.5.0",
+    "semver": "~3.0.1",
+    "strip-comments": "~0.2.0",
+    "through2": "~0.6.1",
+    "vinyl": "~0.4.3",
+    "minimatch": "~2.0.1"
   },
   "devDependencies": {
     "vows": "0.7.x",
@@ -35,12 +59,10 @@
   "bugs": {
     "url": "https://github.com/helloyou2012/open-browser/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/helloyou2012/open-browser/raw/master/LICENSE-MIT"
-    }
-  ],
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://github.com/helloyou2012/open-browser/raw/master/LICENSE-MIT"
+  }],
   "analyze": false,
   "preferGlobal": "true",
   "bin": {

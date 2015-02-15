@@ -7,11 +7,12 @@ var colors = require('colors');
 var portfinder = require('portfinder');
 var argv = require('optimist').argv;
 var ip = require('../lib/ip');
-var openBrowser = require('../lib/open-browser');
-
+var openBrowser = require('../lib');
+var ps = require('system-proxy');
+var log = console.log;
 
 if (argv.h || argv.help) {
-  console.log([
+  log([
     "usage: open-browser [path] [options]",
     "",
     "options:",
@@ -20,7 +21,9 @@ if (argv.h || argv.help) {
     "  -d                 Show directory listings [true]",
     "  -i                 Display autoIndex [true]",
     "  -e                 Set environment: [none], debug, daily, publish.",
-    "  -s --silent        Suppress log messages from output",
+    "  -s --silent        Suppress log messages from output.",
+    "  --clean            Clean proxy settings.",
+    "  --sysproxy         Open system proxy.",
     "  --cors             Enable CORS via the 'Access-Control-Allow-Origin' header",
     "  -c                 Set cache time (in seconds). e.g. -c10 for 10 seconds.",
     "  -t                 Using template handler 'config.js'.",
@@ -30,34 +33,63 @@ if (argv.h || argv.help) {
   process.exit();
 }
 
-var port = argv.p || parseInt(process.env.PORT, 10),
-  host = argv.a || '0.0.0.0',
-  log = (argv.s || argv.silent) ? (function() {}) : console.log,
-  requestLogger;
+var _ip = ip.address();
+var port = argv.p || parseInt(process.env.PORT, 10);
+var host = argv.a || '0.0.0.0';
 
-if (!argv.s && !argv.silent) {
-  requestLogger = function(req) {
-    log('[%s] "%s %s" "%s"', (new Date).toUTCString(), req.method.cyan, req.url.cyan, req.headers['user-agent']);
-  }
+if (argv.clean) {
+  // 取消系统代理
+  return ps.setProxyOff()
+    .then(function() {
+      log('Proxy off ok!'.green);
+      process.exit();
+    })
+    .catch(function() {
+      log('Proxy off fail!'.red);
+      process.exit();
+    });
 }
 
 if (!port) {
   portfinder.basePort = 8080;
   portfinder.getPort(function(err, port) {
     if (err) throw err;
-    listen(port);
+    init(port);
   });
 } else {
-  listen(port);
+  init(port);
 }
+
+function init(port) {
+  argv.sysproxy ? ps.setProxyOn(_ip, port)
+    .then(function() {
+      listen(port);
+    })
+    .catch(function(e) {
+      console.log('Start fail!'.red + e);
+    }) : listen(port);
+
+  var readLine = require("readline");
+  if (process.platform === "win32") {
+    var rl = readLine.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    rl.on("SIGINT", function() {
+      process.emit("SIGINT");
+    });
+  }
+};
 
 function listen(port) {
   var options = {
+    port: port,
+    ip: _ip,
     root: argv._[0],
+    silent: argv.s || argv.silent,
     cache: argv.c,
     showDir: argv.d,
-    autoIndex: argv.i,
-    logFn: requestLogger
+    autoIndex: argv.i
   };
 
   var config = require('../lib/config');
@@ -72,8 +104,6 @@ function listen(port) {
     options.config = config['none'];
   }
 
-  options.proxy = config['proxy'];
-
   if (argv.cors) {
     options.headers = {
       'Access-Control-Allow-Origin': '*',
@@ -83,22 +113,31 @@ function listen(port) {
 
   var server = openBrowser.createServer(options);
   server.listen(port, host, function() {
-    var url = 'http://' + ip.address() + ':' + port.toString();
-
-    log('Starting up open-browser, serving '.yellow + server.root.cyan + ' on port: '.yellow + port.toString().cyan);
+    var url = 'http://' + _ip + ':' + port;
+    log('Starting up open-browser.');
     log('Server url: '.yellow + url.cyan);
     log('Hit CTRL-C to stop the server');
 
     opener(url);
   });
-}
 
-if (process.platform !== 'win32') {
-  //
-  // Signal handlers don't work on Windows.
-  //
   process.on('SIGINT', function() {
-    log('open-browser stopped.'.red);
-    process.exit();
+    server && server.close();
+    if (argv.sysproxy) {
+      // 取消系统代理
+      ps.setProxyOff()
+        .then(function() {
+          log('open-browser stopped.'.red);
+          process.exit();
+        })
+        .catch(function() {
+          log('Proxy off fail!'.red);
+          log('open-browser stopped.'.red);
+          process.exit();
+        });
+    } else {
+      log('open-browser stopped.'.red);
+      process.exit();
+    }
   });
 }
