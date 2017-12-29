@@ -3,7 +3,7 @@ var assert = require('assert'),
     fs = require('fs'),
     vows = require('vows'),
     request = require('request'),
-    openBrowser = require('../lib/open-browser');
+    openBrowser = require('../lib/index');
 
 var root = path.join(__dirname, 'fixtures', 'root');
 
