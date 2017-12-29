@@ -1,6 +1,6 @@
 {
   "name": "open-browser",
-  "version": "3.5.2",
+  "version": "3.6.0",
   "author": "学霸 <helloyou2012@yeah.net>",
   "description": "A http server for debug demo",
   "main": "./lib/index",
